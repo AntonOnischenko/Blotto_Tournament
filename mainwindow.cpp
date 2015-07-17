@@ -35,7 +35,7 @@ void Tournament::addPlayer(std::vector<int> s)
         }
         if (sum == warriorsAmount)  // проверка количества воинов
         {
-            player.push_back(*(new Player(s)));
+            player.push_back(Player(s));
             playersAmount++;
         } else
         {
@@ -236,6 +236,8 @@ void Tournament::deleteAllPlayers()
 {
     playersAmount = 0;
     player.clear();
+    std::vector<Player> tmp = player;
+    player.swap(tmp);
 }
 
 Player::Player(std::vector<int> s): strategy(s), winNum(0), drawNum(0), loseNum(0), score(0)

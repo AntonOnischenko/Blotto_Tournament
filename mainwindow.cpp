@@ -181,32 +181,42 @@ void Tournament::startTournament()
     } else
     {
         clearScore();
-        for (int i = 0; i < playersAmount - 1; i++)
-        {
-            for (int j = i+1; j < playersAmount; j++)
+
+        int arrDraws[cellsAmount][warriorsAmount+1];
+        int arrWins[cellsAmount][warriorsAmount+1];
+        for (int i = 0; i < cellsAmount; i++){
+            for (int j = 0; j < warriorsAmount+1; j++)
             {
-                for (int k = 0; k < cellsAmount; k++)
-                {
-                   if (player[i].showStrategy()[k] == player[j].showStrategy()[k])
-                    {
-                        player[i].addDraw();
-                        player[i].addScore(0.5);
-                        player[j].addDraw();
-                        player[j].addScore(0.5);
-                    }
-                    else if (player[i].showStrategy()[k] > player[j].showStrategy()[k])
-                    {
-                        player[i].addWin();
-                        player[i].addScore(1);
-                        player[j].addLose();
-                    } else
-                    {
-                        player[i].addLose();
-                        player[j].addWin();
-                        player[j].addScore(1);
-                    }
-                }
+                arrDraws[i][j] = 0;
+                arrWins[i][j] = 0;
             }
+        }
+        for (int i = 0; i < playersAmount; i++){ // массив показывает количество игроков сыгравших определенную стратегию
+            for (int j = 0; j < cellsAmount; j++)
+            {
+                arrDraws[j][player[i].showStrategy()[j]] += 1;
+            }
+        }
+        for (int i = 0; i < cellsAmount; i++){
+            int k = 0;
+            for (int j = 0; j < warriorsAmount+1; j++)
+            {
+                arrWins[i][j] += k;
+                k += arrDraws[i][j];
+            }
+        }
+        int games = (playersAmount-1)*cellsAmount;
+        for (int i = 0; i < playersAmount; i++){
+            for (int j = 0; j < cellsAmount; j++)
+            {
+                int draws = arrDraws[j][player[i].showStrategy()[j]]-1;
+                int wins = arrWins[j][player[i].showStrategy()[j]];
+                player[i].addScore(0.5*draws);
+                player[i].addScore(wins);
+                player[i].addWin(wins);
+                player[i].addDraw(draws);
+            }
+            player[i].addLose(games-player[i].wins()-player[i].draws());
         }
          QMessageBox msgBox;
          msgBox.setText("Готово");
@@ -265,6 +275,15 @@ void Player::addLose(){
 
 void Player::addWin(){
     winNum++;
+}
+void Player::addWin(int wins){
+    winNum += wins;
+}
+void Player::addDraw(int draws){
+    drawNum += draws;
+}
+void Player::addLose(int loses){
+    loseNum += loses;
 }
 
 bool operator<(Player const & p1, Player const & p2)

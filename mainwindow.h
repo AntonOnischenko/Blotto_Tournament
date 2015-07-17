@@ -22,6 +22,9 @@ public:
     void addWin();
     void addLose();
     void addDraw();
+    void addWin(int wins);
+    void addDraw(int draws);
+    void addLose(int loses);
     void addScore(float t);
     Player(std::vector<int> s);
     std::vector<int> showStrategy();
